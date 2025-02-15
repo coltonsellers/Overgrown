@@ -1,3 +1,7 @@
+# Overgrown
+
+A web extension that grows vines, plants, flowers, etc. across your browser the longer you have specific tabs open. The overgrowth will begin to block elements of the screen and encourage users to step away or be mindful of how long they spend on these tabs.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
