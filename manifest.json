@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Overgrown Chrome Extension",
+    "version": "1.0.0",
+    "description": "Overgrowth that blocks out website content the longer you have unwanted tabs open",
+    "action": {
+      "default_popup": "index.html"
+    },
+    "permissions": []
+  }
