@@ -4,7 +4,6 @@
 {
     background-color: #5fcde4 !important;
 }
-
 .btn
 {
     background-color: #99e550 !important;
@@ -17,4 +16,40 @@ btn :hover
 {
     background-color: #6abe30 !important;
     color: white !important;
+}
+
+.scrollable-list {
+    overflow-y: auto;   /* Enables vertical scrolling */
+    border: 1px solid #ccc; /* Optional: Just for visibility */
+    padding: 10px; /* Ensure it takes full width */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f0f0f0;
+    width: auto;
+    max-height: 180px;
+}
+.table-header {
+    display: inline-block;
+}
+th.url-column, td.url-column {
+    width: 50%; /* More space for URLs */
+    min-width: 200px;
+    text-align: left;
+  }
+th.time-column {
+  width: 20%;
+  min-width: 100px;
+  text-align: left;
+}
+td.time-column {
+    width: 20%;
+    min-width: 50px;
+}
+
+th.actions-column {
+  width: 30%;
+  min-width: 150px;
+  text-align: left;
+}  
+td.actions-column {
+    justify-content: center;
 }

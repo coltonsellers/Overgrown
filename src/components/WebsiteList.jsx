@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./popupglobal.css";
 
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([]);
@@ -13,12 +14,17 @@ export default function WebsiteList() {
     if (editIndex !== null) {
       // Update existing website
       const updatedWebsites = websites.map((website, index) =>
-        index === editIndex ? { title: newWebsite, timeLeft: newTimeLimit } : website
+        index === editIndex
+          ? { title: newWebsite, timeLeft: newTimeLimit }
+          : website
       );
       setWebsites(updatedWebsites);
 
       // Send the updated websites data to background.js
-      chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
+      chrome.runtime.sendMessage({
+        type: "updateWebsites",
+        websites: updatedWebsites,
+      });
       setEditIndex(null);
     } else {
       // Add new website
@@ -26,7 +32,11 @@ export default function WebsiteList() {
       setWebsites([...websites, newSite]);
 
       // Send the new website data to background.js
-      chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
+      chrome.runtime.sendMessage({
+        type: "addWebsite",
+        website: newWebsite,
+        timeLeft: newTimeLimit,
+      });
     }
     setNewWebsite("");
     setNewTimeLimit("");
@@ -53,7 +63,7 @@ export default function WebsiteList() {
 
   return (
     <section>
-      <div className="container py-5 h-100">
+      <div className="container">
         <div className="row d-flex justify-content-center align-items-center">
           <div className="col-lg-9 col-xl-7">
             <div className="card rounded-3">
@@ -63,45 +73,47 @@ export default function WebsiteList() {
                   Improve your productivity.
                 </h4>
                 {/* Table of Websites */}
-                <table className="table mb-4">
-                  <thead>
-                    <tr>
-                      <th scope="col">Website</th>
-                      <th scope="col">Time Left</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {websites.length === 0 ? (
+                <div className="scrollable-list">
+                  <table>
+                    <thead>
                       <tr>
-                        <td colSpan="3" className="text-center">
-                          No websites being tracked.
-                        </td>
+                        <th className="url-column">Website</th>
+                        <th className="time-column">Time Left</th>
+                        <th className="action-column">Actions</th>
                       </tr>
-                    ) : (
-                      websites.map((website, index) => (
-                        <tr key={index}>
-                          <td>{website.title}</td>
-                          <td>{website.timeLeft}</td>
-                          <td>
-                            <button
-                              className="btn btn-success"
-                              onClick={() => handleEdit(index)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => handleDelete(index)}
-                            >
-                              Delete
-                            </button>
+                    </thead>
+                    <tbody>
+                      {websites.length === 0 ? (
+                        <tr>
+                          <td colSpan="3" className="text-center">
+                            No websites being tracked.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        websites.map((website, index) => (
+                          <tr key={index}>
+                            <td className="url-column">{website.title}</td>
+                            <td className="time-column">{website.timeLeft}</td>
+                            <td className="action-column">
+                              <button
+                                className="btn btn-success"
+                                onClick={() => handleEdit(index)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => handleDelete(index)}
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
                 {/* Button to Add New Website */}
                 {!modalOpen && (
                   <div className="row d-flex justify-content-center mb-4 pb-2">
