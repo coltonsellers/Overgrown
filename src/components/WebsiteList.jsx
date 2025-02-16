@@ -49,6 +49,40 @@ export default function WebsiteList() {
                   Minimize the amount of time you spend on certain sites! Improve your productivity.
                 </h4>
 
+                {/* Table of Websites */}
+                <table className="table mb-4">
+                  <thead>
+                    <tr>
+                      <th scope="col">Website</th>
+                      <th scope="col">Time Left</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {websites.length === 0 ? (
+                      <tr>
+                        <td colSpan="3" className="text-center">
+                          No websites being tracked.
+                        </td>
+                      </tr>
+                    ) : (
+                      websites.map((website, index) => (
+                        <tr key={index}>
+                          <td>{website.title}</td>
+                          <td>{website.timeLeft}</td>
+                          <td>
+                          <button className="btn btn-success" onClick={() => handleFinish(index)}>
+                              Edit
+                            </button>
+                            <button className="btn btn-danger" onClick={() => handleDelete(index)}>
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
                 {/* Modal for Adding a New Website */}
                 {modalOpen && (
                   <div className="modal">
@@ -92,40 +126,6 @@ export default function WebsiteList() {
                   </div>
                 </div>
 
-                {/* Table of Websites */}
-                <table className="table mb-4">
-                  <thead>
-                    <tr>
-                      <th scope="col">Website</th>
-                      <th scope="col">Time Left</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {websites.length === 0 ? (
-                      <tr>
-                        <td colSpan="3" className="text-center">
-                          No websites being tracked.
-                        </td>
-                      </tr>
-                    ) : (
-                      websites.map((website, index) => (
-                        <tr key={index}>
-                          <td>{website.title}</td>
-                          <td>{website.timeLeft}</td>
-                          <td>
-                            <button className="btn btn-danger" onClick={() => handleDelete(index)}>
-                              Delete
-                            </button>
-                            <button className="btn btn-success" onClick={() => handleFinish(index)}>
-                              Edit
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>
