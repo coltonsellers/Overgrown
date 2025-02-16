@@ -89,7 +89,6 @@ export default function WebsiteList() {
                     <div className="modal-content">
                       <div className="modal-header">
                         <h5 className="modal-title">Add New Website</h5>
-                        <button onClick={() => setModalOpen(false)}>&times;</button>
                       </div>
                       <div className="modal-body">
                         <input
@@ -125,7 +124,6 @@ export default function WebsiteList() {
                     </button>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
