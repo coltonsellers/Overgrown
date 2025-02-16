@@ -1,14 +1,23 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import "./popupglobal.css";
 import grass from "../assets/grass.svg";
 
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([]);
-
   const [newWebsite, setNewWebsite] = useState("");
   const [newTimeLimit, setNewTimeLimit] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+
+  useEffect(() => {
+    // Load only if necessary
+    chrome.storage.local.get("websites", (data) => {
+      if (data.websites) {
+        setWebsites(data.websites);
+      }
+    });
+  }, []);
 
   const handleAddWebsite = () => {
     if (newWebsite.trim() === "" || newTimeLimit.trim() === "") return;
@@ -20,6 +29,7 @@ export default function WebsiteList() {
           : website
       );
       setWebsites(updatedWebsites);
+      chrome.storage.local.set({ websites: updatedWebsites });
 
       // Send the updated websites data to background.js
       chrome.runtime.sendMessage({
@@ -30,7 +40,9 @@ export default function WebsiteList() {
     } else {
       // Add new website
       const newSite = { title: newWebsite, timeLeft: newTimeLimit };
-      setWebsites([...websites, newSite]);
+      const updatedWebsites = [...websites, newSite];
+      setWebsites(updatedWebsites);
+      chrome.storage.local.set({ websites: updatedWebsites });
 
       // Send the new website data to background.js
       chrome.runtime.sendMessage({
@@ -47,6 +59,7 @@ export default function WebsiteList() {
   const handleDelete = (index) => {
     const updatedWebsites = websites.filter((_, i) => i !== index);
     setWebsites(updatedWebsites);
+    chrome.storage.local.set({ websites: updatedWebsites });
 
     // Send the updated websites data to background.js
     chrome.runtime.sendMessage({
