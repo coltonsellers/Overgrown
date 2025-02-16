@@ -20,6 +20,7 @@ export default defineConfig({
       input: {
         main: './index.html',
         background: './src/background/background.js', // Entry point for background script
+        content: './src/content/content.js', // Entry point for content script
 
       },
       output: {
