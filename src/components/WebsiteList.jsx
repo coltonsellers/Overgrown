@@ -17,17 +17,12 @@ export default function WebsiteList() {
     if (editIndex !== null) {
       // Update existing website
       const updatedWebsites = websites.map((website, index) =>
-        index === editIndex
-          ? { title: newWebsite, timeLeft: newTimeLimit }
-          : website
+        index === editIndex ? { title: newWebsite, timeLeft: newTimeLimit } : website
       );
       setWebsites(updatedWebsites);
 
       // Send the updated websites data to background.js
-      chrome.runtime.sendMessage({
-        type: "updateWebsites",
-        websites: updatedWebsites,
-      });
+      chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
       setEditIndex(null);
     } else {
       // Add new website
@@ -35,11 +30,7 @@ export default function WebsiteList() {
       setWebsites([...websites, newSite]);
 
       // Send the new website data to background.js
-      chrome.runtime.sendMessage({
-        type: "addWebsite",
-        website: newWebsite,
-        timeLeft: newTimeLimit,
-      });
+      chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
     }
     setNewWebsite("");
     setNewTimeLimit("");
