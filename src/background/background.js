@@ -24,7 +24,6 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
         activeTabId = activeInfo.tabId;
         startTime = Date.now();
         startTimer();
-        console.log('tab switch');
     }
 });
 
@@ -33,7 +32,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tabId === activeTabId && changeInfo.status === 'complete') {
         startTime = Date.now();
         startTimer();
-        console.log('tab update');
     }
 });
 
@@ -41,7 +39,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 chrome.windows.onFocusChanged.addListener((windowId) => {
     if (windowId === chrome.windows.WINDOW_ID_NONE) {
         // Browser was minimized or unfocused
-        console.log('minimized');
         pauseTimer();
     } else {
         // Regain of focus
@@ -49,7 +46,6 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
             if (tabs[0] && tabs[0].id === activeTabId) {
                 // Resume timer if same tab as before
                 startTimer();
-                console.log('refocussed');
             }
         });
     }
@@ -63,7 +59,6 @@ function startTimer() {
     timerInterval = setInterval(() => {
         if (activeTabId && startTime) {
             elapsedTime = (Date.now() - startTime) / 1000;
-            console.log(`Elapsed Time: ${elapsedTime} seconds`); // Log elapsed time
             checkSiteAndUpdateVegetation(activeTabId, elapsedTime);
         }
     }, 1000);
@@ -77,8 +72,6 @@ function pauseTimer() {
       isTabActive = false;
       if (activeTabId) {
           sendMessageToTab(activeTabId, { action: "pauseVegetation" });
-          console.log('pause timer');
-
       }
   }
 }
