@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./popupglobal.css";
-import grass from '../assets/grass.svg';
+import grass from "../assets/grass.svg";
 
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([]);
@@ -62,6 +62,12 @@ export default function WebsiteList() {
     setModalOpen(true);
   };
 
+  const formatTimeLeft = (timeInHours) => {
+    const hours = Math.floor(timeInHours);
+    const minutes = Math.round((timeInHours - hours) * 60);
+    return `${hours}:${minutes.toString().padStart(2, "0")}`;
+  };
+
   return (
     <section>
       <div className="container">
@@ -94,7 +100,9 @@ export default function WebsiteList() {
                         websites.map((website, index) => (
                           <tr key={index}>
                             <td className="url-column">{website.title}</td>
-                            <td className="time-column">{website.timeLeft}</td>
+                            <td className="time-column">
+                              {formatTimeLeft(website.timeLeft)}
+                            </td>
                             <td className="action-column">
                               <button
                                 className="btn btn-success"
@@ -128,7 +136,6 @@ export default function WebsiteList() {
                     </div>
                     <img src={grass} alt="logo" className="logo" />
                   </div>
-                  
                 )}
                 {/* Modal for Adding a New Website */}
                 {modalOpen && (
@@ -154,6 +161,7 @@ export default function WebsiteList() {
                           <input
                             className="input-field"
                             type="number"
+                            step="any"
                             placeholder="Enter a time limit (hours)"
                             value={newTimeLimit}
                             onChange={(e) => setNewTimeLimit(e.target.value)}
