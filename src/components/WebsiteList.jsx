@@ -42,7 +42,10 @@ export default function WebsiteList() {
     setWebsites(updatedWebsites);
 
     // Send the updated websites data to background.js
-    chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
+    chrome.runtime.sendMessage({
+      type: "updateWebsites",
+      websites: updatedWebsites,
+    });
   };
 
   const handleEdit = (index) => {
