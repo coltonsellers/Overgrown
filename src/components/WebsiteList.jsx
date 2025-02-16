@@ -17,10 +17,17 @@ export default function WebsiteList() {
     setNewWebsite("");
     setNewTimeLimit("");
     setModalOpen(false);
+
+    // Send the new website data to background.js
+    chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
   };
 
   const handleDelete = (index) => {
-    setWebsites(websites.filter((_, i) => i !== index));
+    const updatedWebsites = websites.filter((_, i) => i !== index);
+    setWebsites(updatedWebsites);
+
+    // Send the updated websites data to background.js
+    chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
   };
 
   const handleFinish = (index) => {
@@ -127,6 +134,7 @@ export default function WebsiteList() {
     </section>
   );
 }
+
 
 /*
 export default function WebsiteList({ websites }) {

@@ -1,5 +1,4 @@
 import React from "react";
-import { MDBBtn } from "mdb-react-ui-kit";
 
 export default function WebsiteItem({ title, timeLeft, onDelete, onEdit }) {
   return (
@@ -7,12 +6,12 @@ export default function WebsiteItem({ title, timeLeft, onDelete, onEdit }) {
       <td>{title}</td>
       <td>{timeLeft}</td>
       <td>
-        <MDBBtn type="button" color="danger" onClick={onDelete}>
+        <button type="button" className="btn btn-danger" onClick={onDelete}>
           Delete
-        </MDBBtn>
-        <MDBBtn type="button" color="success" className="ms-1" onClick={onEdit}>
+        </button>
+        <button type="button" className="btn btn-success ms-1" onClick={onEdit}>
           Edit
-        </MDBBtn>
+        </button>
       </td>
     </tr>
   );
