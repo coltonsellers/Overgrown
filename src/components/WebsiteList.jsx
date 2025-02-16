@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./popupglobal.css";
 import grass from "../assets/grass.svg";
 
@@ -17,7 +16,30 @@ export default function WebsiteList() {
         setWebsites(data.websites);
       }
     });
+
+    const interval = setInterval(() => {
+      chrome.storage.local.get(null, (data) => {
+        if (data.websites) {
+          const updatedWebsites = data.websites.map((website) => {
+            const timeLeftKey = `timeLeft_${website.title}`;
+            return {
+              ...website,
+              timeLeft: data[timeLeftKey] !== undefined ? data[timeLeftKey] : website.timeLeft,
+            };
+          });
+          setWebsites(updatedWebsites);
+        }
+      });
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
   }, []);
+
+  const formatTimeLeft = (timeInMinutes) => {
+    const hours = Math.floor(timeInMinutes / 60);
+    const minutes = timeInMinutes % 60;
+    return `${hours}h ${minutes}m`;
+  };
 
   const handleAddWebsite = () => {
     if (newWebsite.trim() === "" || newTimeLimit.trim() === "") return;
@@ -73,12 +95,6 @@ export default function WebsiteList() {
     setNewWebsite(websites[index].title);
     setNewTimeLimit(websites[index].timeLeft);
     setModalOpen(true);
-  };
-
-  const formatTimeLeft = (timeInHours) => {
-    const hours = Math.floor(timeInHours);
-    const minutes = Math.round((timeInHours - hours) * 60);
-    return `${hours}:${minutes.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -174,7 +190,7 @@ export default function WebsiteList() {
                             className="input-field"
                             type="number"
                             step="any"
-                            placeholder="Enter a time limit (hours)"
+                            placeholder="Enter a time limit (min)"
                             value={newTimeLimit}
                             onChange={(e) => setNewTimeLimit(e.target.value)}
                           />

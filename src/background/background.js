@@ -133,6 +133,8 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
       const remainingTime = totalTime - elapsedTime;
       const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
       console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
+      const minutesLeft = Math.max(0, Math.ceil(remainingTime / 60));
+      chrome.storage.local.set({ [`timeLeft_${site.url}`]: minutesLeft });
 
       if (remainingTime <= 0) {
         console.log(`Time's up for site ${site.url}, locking site.`);
