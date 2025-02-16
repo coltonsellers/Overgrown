@@ -134,7 +134,6 @@ export default function WebsiteList() {
                         Add
                       </button>
                     </div>
-                    <img src={grass} alt="logo" className="logo" />
                   </div>
                 )}
                 {/* Modal for Adding a New Website */}
@@ -183,6 +182,7 @@ export default function WebsiteList() {
                     </div>
                   </div>
                 )}
+                <img src={grass} alt="logo" className="logo" />
               </div>
             </div>
           </div>
