@@ -1,17 +1,29 @@
 let tabsData = {};
 let activeTabId = null;
-let urlList = [ // Store the URL list
-    
-]; 
+let urlList = [];
 
+// Function to send messages to a specific tab
 function sendMessageToTab(tabId, message) {
   console.log(`Sending message to tab ${tabId}:`, message);
-  chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => {
-    const tab = tabs[0];
-    if (tab && tab.id === tabId) {
-      chrome.tabs.sendMessage(tabId, message);
-    }
-  });
+
+  // Inject the content script if not already loaded
+  chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    files: ["content.js"],
+  })
+    .then(() => {
+      // Send the message after the content script is injected
+      chrome.tabs.sendMessage(tabId, message, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Message failed:", chrome.runtime.lastError);
+        } else {
+          console.log("Message sent successfully:", response);
+        }
+      });
+    })
+    .catch((error) => {
+      console.error("Failed to inject content script:", error);
+    });
 }
 
 // Track tab switches
@@ -23,7 +35,6 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
       console.log(`Pausing timer for tab ${activeTabId}`);
       pauseTimer(activeTabId);
     }
-
     // Check if the new tab's URL matches any of the tracked URLs
     activeTabId = activeInfo.tabId;
     chrome.tabs.get(activeTabId, (tab) => {
@@ -85,7 +96,6 @@ function startTimer(tabId) {
   const tabData = tabsData[tabId];
   tabData.isTabActive = true;
   tabData.startTime = Date.now() - tabData.elapsedTime * 1000;
-
   if (tabData.timerInterval) clearInterval(tabData.timerInterval);
   tabData.timerInterval = setInterval(() => {
     tabData.elapsedTime = (Date.now() - tabData.startTime) / 1000;
@@ -109,49 +119,42 @@ function pauseTimer(tabId) {
 // Check if current site is in the website list
 function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
   console.log(`Checking site and updating vegetation for tab ${tabId} with elapsed time ${elapsedTime}`);
-  const site = urlList.find((s) => tab.url.includes(s.url));
-  if (site) {
-    const totalTime = site.timer * 60;
-    const remainingTime = totalTime - elapsedTime;
-    const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
-
-    console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
-
-    if (remainingTime <= 0) {
-      console.log(`Time's up for site ${site.url}, locking site.`);
-      sendMessageToTab(tabId, { action: "lockSite" });
-    } else if (remainingTime <= 5 * 60) {
-      sendMessageToTab(tabId, {
-        action: "updateVegetation",
-        percentage,
-      });
+  chrome.tabs.get(tabId, (tab) => {
+    const site = urlList.find((s) => tab.url.includes(s.url));
+    if (site) {
+      const totalTime = site.timer * 60;
+      const remainingTime = totalTime - elapsedTime;
+      const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
+      console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
+      if (remainingTime <= 0) {
+        console.log(`Time's up for site ${site.url}, locking site.`);
+        sendMessageToTab(tabId, { action: "lockSite" });
+      } else if (remainingTime <= 5 * 60) {
+        sendMessageToTab(tabId, {
+          action: "updateVegetation",
+          percentage,
+        });
+      }
     }
-  }
+  });
 }
 
-// Listen for start timer message from React component
+// Listen for messages from the React component
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('Received message:', message);
-  if (message.action === "UPDATE_URL_LIST") {
-    urlList = message.urls;
+  if (message.type === "addWebsite") {
+    const newWebsite = {
+      url: message.website,
+      timer: parseInt(message.timeLeft, 10) || 0,
+    };
+    urlList.push(newWebsite);
+    console.log('New website added:', newWebsite);
+    console.log('Updated URL list:', urlList);
+  } else if (message.type === "updateWebsites") {
+    urlList = message.websites.map((website) => ({
+      url: website.title,
+      timer: parseInt(website.timeLeft, 10) || 0,
+    }));
     console.log('URL list updated:', urlList);
-  } else if (message.action === "START_TIMER") {
-    const { website, index } = message;
-    const sites = [...urlList, website];
-    urlList = sites;
-    chrome.storage.sync.set({ sites }, () => {
-      // Set timer data for the website
-      if (!tabsData[activeTabId]) {
-        tabsData[activeTabId] = {
-          startTime: Date.now(),
-          elapsedTime: 0,
-          isTabActive: true,
-          timerInterval: null,
-          totalTime: website.duration * 60
-        };
-      }
-      console.log(`Starting timer for new website ${website.title}`);
-      startTimer(activeTabId);
-    });
   }
 });
