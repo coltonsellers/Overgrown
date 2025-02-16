@@ -1,98 +1,13 @@
-import React from "react";
-import {
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBCol,
-  MDBContainer,
-  MDBInput,
-  MDBRow,
-  MDBTable,
-  MDBTableBody,
-  MDBTableHead,
-} from "mdb-react-ui-kit";
+import React, { useState, useEffect } from "react";
+import WebsiteList from "./WebsiteList";
 
-export default function App() {
-  return (
-    <section className="vh-100" style={{ backgroundColor: "#eee" }}>
-      <MDBContainer className="py-5 h-100">
-        <MDBRow className="d-flex justify-content-center align-items-center">
-          <MDBCol lg="9" xl="7">
-            <MDBCard className="rounded-3">
-              <MDBCardBody className="p-4">
-                <h4 className="text-center my-3 pb-3">To Do App</h4>
-                <MDBRow className="row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
-                  <MDBCol size="12">
-                    <MDBInput
-                      label="Enter a task here"
-                      id="form1"
-                      type="text"
-                    />
-                  </MDBCol>
-                  <MDBCol size="12">
-                    <MDBBtn type="submit">Save</MDBBtn>
-                  </MDBCol>
-                  <MDBCol size="12">
-                    <MDBBtn type="submit" color="warning">
-                      Get tasks
-                    </MDBBtn>
-                  </MDBCol>
-                </MDBRow>
-                <MDBTable className="mb-4">
-                  <MDBTableHead>
-                    <tr>
-                      <th scope="col">Todo item</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </MDBTableHead>
-                  <MDBTableBody>
-                    <tr>
-                      <td>Buy groceries for next week</td>
-                      <td>In progress</td>
-                      <td>
-                        <MDBBtn type="submit" color="warning">
-                          Delete
-                        </MDBBtn>
+export default function Popup() {
+    const [websites, setWebsites] = useState([]);
 
-                        <MDBBtn type="submit" color="success" className="ms-1">
-                          Finished
-                        </MDBBtn>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Renew car insurance</td>
-                      <td>In progress</td>
-                      <td>
-                        <MDBBtn type="submit" color="danger">
-                          Delete
-                        </MDBBtn>
-
-                        <MDBBtn type="submit" color="success" className="ms-1">
-                          Finished
-                        </MDBBtn>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Sign up for online course</td>
-                      <td>In progress</td>
-                      <td>
-                        <MDBBtn type="submit" color="danger">
-                          Delete
-                        </MDBBtn>
-
-                        <MDBBtn type="submit" color="success" className="ms-1">
-                          Finished
-                        </MDBBtn>
-                      </td>
-                    </tr>
-                  </MDBTableBody>
-                </MDBTable>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-    </section>
-  );
-}
+    return (
+        <div className="p-4 w-64">
+            <h1 className="text-lg font-bold mb-2">Screen Time Tracker</h1>
+            <WebsiteList websites={websites} />
+        </div>
+    );
+};
