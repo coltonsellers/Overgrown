@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./popupglobal.css";
-import grass from "../assets/grass.svg";
+import grass from "../assets/newgrasslove.svg";
 
 
 export default function WebsiteList() {
