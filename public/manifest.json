@@ -12,6 +12,12 @@
   "host_permissions": [
   "<all_urls>"
 ],
+"web_accessible_resources": [
+  {
+    "resources": ["assets/*.svg"],
+    "matches": ["<all_urls>"]
+  }
+],
   "permissions": [
     "tabs",
     "activeTab",
@@ -23,5 +29,8 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "icons": {
+      "128": "oglogo_128.png"
+  }
 }

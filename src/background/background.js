@@ -2,6 +2,12 @@ let tabsData = {};
 let activeTabId = null; 
 let urlList = []; // Store the URL list 
 
+// Array to store the frame paths
+const frames = [];
+for (let i = 1; i <= 20; i++) {
+  frames.push(chrome.runtime.getURL(`assets/frame${i}.svg`));
+}
+
 
 function sendMessageToTab(tabId, message) {
     console.log(`Sending message to tab ${tabId}:`, message);
@@ -114,28 +120,67 @@ function pauseTimer(tabId) {
   } 
 } 
 
-// Check if current site is in the website list 
-function checkSiteAndUpdateVegetation(tabId, elapsedTime) { 
-  console.log(`Checking site and updating vegetation for tab ${tabId} with elapsed time ${elapsedTime}`); 
-  chrome.tabs.get(tabId, (tab) => { 
-    const site = urlList.find((s) => tab.url.includes(s.url)); 
-    if (site) { 
-      const totalTime = site.timer * 60; 
-      const remainingTime = totalTime - elapsedTime; 
-      const percentage = Math.max(0, (elapsedTime / totalTime) * 100); 
-      console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`); 
-      if (remainingTime <= 0) { 
-        console.log(`Time's up for site ${site.url}, locking site.`); 
-        sendMessageToTab(tabId, { action: "lockSite" }); 
-      } else if (remainingTime <= 5 * 60) { 
-        sendMessageToTab(tabId, { 
-          action: "updateVegetation", 
-          percentage, 
-        }); 
-      } 
-    } 
-  }); 
-} 
+// Check if current site is in the website list, and perform frame addition functions
+let frameInterval = null;
+let currentFrameIndex = 0;
+
+function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
+  console.log(`Checking site and updating vegetation for tab ${tabId} with elapsed time ${elapsedTime}`);
+  chrome.tabs.get(tabId, (tab) => {
+    const site = urlList.find((s) => tab.url.includes(s.url));
+    if (site) {
+      const totalTime = site.timer * 60;
+      const remainingTime = totalTime - elapsedTime;
+      const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
+      console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
+
+      if (remainingTime <= 0) {
+        console.log(`Time's up for site ${site.url}, locking site.`);
+        sendMessageToTab(tabId, { action: "lockSite" });
+        clearInterval(frameInterval); // Clear the interval if the time is up
+        frameInterval = null;
+        currentFrameIndex = 0;
+      } else if (totalTime < 600) { // If total time is less than 10 minutes
+        if (!frameInterval) {
+          console.log(`Total time is less than 10 minutes for site ${site.url}, starting vegetation update.`);
+          const frameIntervalTime = (totalTime * 1000) / 20; // Spread 20 frames evenly across total time
+          frameInterval = setInterval(() => {
+            if (currentFrameIndex < 20) {
+              sendMessageToTab(tabId, {
+                action: "updateVegetation",
+                percentage,
+                frameIndex: currentFrameIndex,
+                framePath: frames[currentFrameIndex], // Send the frame path
+              });
+              currentFrameIndex++;
+            } else {
+              clearInterval(frameInterval); // Stop the interval after 20 frames
+              frameInterval = null;
+              currentFrameIndex = 0;
+            }
+          }, frameIntervalTime);
+        }
+      } else if (remainingTime <= 600 && !frameInterval) { // If total time is 10 minutes or more
+        console.log(`10 minutes left for site ${site.url}, starting vegetation update.`);
+        frameInterval = setInterval(() => {
+          if (currentFrameIndex < 20) {
+            sendMessageToTab(tabId, {
+              action: "updateVegetation",
+              percentage,
+              frameIndex: currentFrameIndex,
+              framePath: frames[currentFrameIndex], // Send the frame path
+            });
+            currentFrameIndex++;
+          } else {
+            clearInterval(frameInterval); // Stop the interval after 20 frames
+            frameInterval = null;
+            currentFrameIndex = 0;
+          }
+        }, 30000); // 30 seconds interval
+      }
+    }
+  });
+}
 
 // Listen for messages from the React component 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => { 
