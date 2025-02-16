@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import WebsiteList from "./WebsiteList";
-import cloud from "../assets/clouds.svg";
+import cloud from "../assets/clouds2.svg";
 
 export default function Popup() {
   const [websites, setWebsites] = useState([]);
