@@ -41,7 +41,6 @@ export default function App() {
                 <MDBTable className="mb-4">
                   <MDBTableHead>
                     <tr>
-                      <th scope="col">No.</th>
                       <th scope="col">Todo item</th>
                       <th scope="col">Status</th>
                       <th scope="col">Actions</th>
@@ -49,11 +48,10 @@ export default function App() {
                   </MDBTableHead>
                   <MDBTableBody>
                     <tr>
-                      <th scope="row">1</th>
                       <td>Buy groceries for next week</td>
                       <td>In progress</td>
                       <td>
-                        <MDBBtn type="submit" color="danger">
+                        <MDBBtn type="submit" color="warning">
                           Delete
                         </MDBBtn>
 
@@ -63,7 +61,6 @@ export default function App() {
                       </td>
                     </tr>
                     <tr>
-                      <th scope="row">2</th>
                       <td>Renew car insurance</td>
                       <td>In progress</td>
                       <td>
@@ -77,7 +74,6 @@ export default function App() {
                       </td>
                     </tr>
                     <tr>
-                      <th scope="row">3</th>
                       <td>Sign up for online course</td>
                       <td>In progress</td>
                       <td>
