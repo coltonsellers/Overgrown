@@ -22,8 +22,15 @@ npm install vite-plugin-static-copy
 ```
 
 **To run:**
+Start by running this command in the terminal:
+
+```
+npm run build
+```
+
 Go to chrome extensions, make sure you are in developer mode, then load unpacked on the build folder.
-Once you have it packed the first time, npm run build in terminal and refresh the extension from the chrome extensions page and it should update
+<br/>
+Once you have it packed the first time, to update the build, you can run build again in the terminal and refresh the extension from the chrome extensions page.
 
 # React + Vite
 
