@@ -23,5 +23,8 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "icons": {
+      "128": "oglogo_128.png"
+  }
 }
