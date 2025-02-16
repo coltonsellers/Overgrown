@@ -4,7 +4,7 @@ let urlList = []; // Store the URL list
 
 // Array to store the frame paths
 const frames = [];
-for (let i = 1; i <= 20; i++) {
+for (let i = 1; i <= 25; i++) {
   frames.push(chrome.runtime.getURL(`assets/frame${i}.svg`));
 }
 
@@ -145,9 +145,9 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
       } else if (totalTime < 600) { // If total time is less than 10 minutes
         if (!frameInterval) {
           console.log(`Total time is less than 10 minutes for site ${site.url}, starting vegetation update.`);
-          const frameIntervalTime = (totalTime * 1000) / 20; // Spread 20 frames evenly across total time
+          const frameIntervalTime = (totalTime * 1000) / 25; // Spread 20 frames evenly across total time
           frameInterval = setInterval(() => {
-            if (currentFrameIndex < 20) {
+            if (currentFrameIndex <= 25) {
               sendMessageToTab(tabId, {
                 action: "updateVegetation",
                 percentage,
@@ -165,7 +165,7 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
       } else if (remainingTime <= 600 && !frameInterval) { // If total time is 10 minutes or more
         console.log(`10 minutes left for site ${site.url}, starting vegetation update.`);
         frameInterval = setInterval(() => {
-          if (currentFrameIndex < 20) {
+          if (currentFrameIndex <= 25) {
             sendMessageToTab(tabId, {
               action: "updateVegetation",
               percentage,
