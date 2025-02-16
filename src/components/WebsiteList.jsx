@@ -1,21 +1,4 @@
 import React, { useState } from "react";
-import {
-  MDBBtn,
-  MDBCard,
-  MDBCardBody,
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBTable,
-  MDBTableBody,
-  MDBTableHead,
-  MDBModal,
-  MDBModalBody,
-  MDBModalHeader,
-  MDBModalFooter,
-  MDBInput,
-} from "mdb-react-ui-kit";
-import WebsiteItem from "./WebsiteItem";
 
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([
@@ -24,23 +7,20 @@ export default function WebsiteList() {
     { title: "Sign up for online course", timeLeft: "In progress" },
   ]);
 
-  const [newWebsite, setNewWebsite] = useState(""); // Stores new website name
-  const [modalOpen, setModalOpen] = useState(false); // Controls modal visibility
+  const [newWebsite, setNewWebsite] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // Function to handle adding a new website
   const handleAddWebsite = () => {
     if (newWebsite.trim() === "") return;
     setWebsites([...websites, { title: newWebsite, timeLeft: "In progress" }]);
-    setNewWebsite(""); // Clear input
-    setModalOpen(false); // Close modal
+    setNewWebsite("");
+    setModalOpen(false);
   };
 
-  // Function to delete a website
   const handleDelete = (index) => {
     setWebsites(websites.filter((_, i) => i !== index));
   };
 
-  // Function to mark a website as finished
   const handleFinish = (index) => {
     setWebsites(
       websites.map((website, i) =>
@@ -51,52 +31,62 @@ export default function WebsiteList() {
 
   return (
     <section className="vh-100" style={{ backgroundColor: "#eee" }}>
-      <MDBContainer className="py-5 h-100">
-        <MDBRow className="d-flex justify-content-center align-items-center">
-          <MDBCol lg="9" xl="7">
-            <MDBCard className="rounded-3">
-              <MDBCardBody className="p-4">
-                <h4 className="text-center my-3 pb-3">Minimize the amount of time you spend on certain sites! Improve your </h4>
+      <div className="container py-5 h-100">
+        <div className="row d-flex justify-content-center align-items-center">
+          <div className="col-lg-9 col-xl-7">
+            <div className="card rounded-3">
+              <div className="card-body p-4">
+                <h4 className="text-center my-3 pb-3">
+                  Minimize the amount of time you spend on certain sites! Improve your productivity.
+                </h4>
 
                 {/* Modal for Adding a New Website */}
-                <MDBModal show={modalOpen} setShow={setModalOpen}>
-                  <MDBModalHeader>Add New Website</MDBModalHeader>
-                  <MDBModalBody>
-                    <MDBInput
-                    label="Enter a website here"
-                    value={newWebsite}
-                    onChange={(e) => setNewWebsite(e.target.value)}
-                    />
-                  </MDBModalBody>
-                  <MDBModalFooter>
-                    <MDBBtn color="secondary" onClick={() => setModalOpen(false)}>
-                      Cancel
-                    </MDBBtn>
-                    <MDBBtn color="success" onClick={handleAddWebsite}>
-                      Save
-                    </MDBBtn>
-                  </MDBModalFooter>
-                </MDBModal>
+                {modalOpen && (
+                  <div className="modal">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Add New Website</h5>
+                        <button onClick={() => setModalOpen(false)}>&times;</button>
+                      </div>
+                      <div className="modal-body">
+                        <input
+                          type="text"
+                          placeholder="Enter a website here"
+                          value={newWebsite}
+                          onChange={(e) => setNewWebsite(e.target.value)}
+                        />
+                      </div>
+                      <div className="modal-footer">
+                        <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
+                          Cancel
+                        </button>
+                        <button className="btn btn-success" onClick={handleAddWebsite}>
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                {/* Buttons to Add New Wesbite */}
-                <MDBRow className="d-flex justify-content-center mb-4 pb-2">
-                  <MDBCol size="auto">
-                    <MDBBtn onClick={() => setModalOpen(true)} color="primary">
+                {/* Button to Add New Website */}
+                <div className="row d-flex justify-content-center mb-4 pb-2">
+                  <div className="col-auto">
+                    <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
                       Add
-                    </MDBBtn>
-                  </MDBCol>
-                </MDBRow>
+                    </button>
+                  </div>
+                </div>
 
                 {/* Table of Websites */}
-                <MDBTable className="mb-4">
-                  <MDBTableHead>
+                <table className="table mb-4">
+                  <thead>
                     <tr>
                       <th scope="col">Website</th>
                       <th scope="col">Time Left</th>
                       <th scope="col">Actions</th>
                     </tr>
-                  </MDBTableHead>
-                  <MDBTableBody>
+                  </thead>
+                  <tbody>
                     {websites.length === 0 ? (
                       <tr>
                         <td colSpan="3" className="text-center">
@@ -105,26 +95,30 @@ export default function WebsiteList() {
                       </tr>
                     ) : (
                       websites.map((website, index) => (
-                        <WebsiteItem
-                          key={index}
-                          title={website.title}
-                          timeLeft={website.timeLeft}
-                          onDelete={() => handleDelete(index)}
-                          onFinish={() => handleFinish(index)}
-                        />
+                        <tr key={index}>
+                          <td>{website.title}</td>
+                          <td>{website.timeLeft}</td>
+                          <td>
+                            <button className="btn btn-danger" onClick={() => handleDelete(index)}>
+                              Delete
+                            </button>
+                            <button className="btn btn-success" onClick={() => handleFinish(index)}>
+                              Edit
+                            </button>
+                          </td>
+                        </tr>
                       ))
                     )}
-                  </MDBTableBody>
-                </MDBTable>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
-
 
 
 /*
