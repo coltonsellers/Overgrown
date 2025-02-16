@@ -6,13 +6,21 @@ out elements of the page, and encouraging the user to step away for a bit or be 
 
 # Installation and Setup
 
-Clone the GitHub repository into your code manager. "git clone <repo URL>"
-<br/>
+Clone the GitHub repository into your code manager:
+
+```
+"git clone <repo URL>"
+```
+
 Then run the following commands in the terminal:
 <br/>
 
 ```
 npm install
+```
+
+```
+npm install mdb-react-ui-kit
 ```
 
 and
