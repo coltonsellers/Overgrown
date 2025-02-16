@@ -19,10 +19,6 @@ Then run the following commands in the terminal:
 npm install
 ```
 
-```
-npm install mdb-react-ui-kit
-```
-
 and
 
 ```
