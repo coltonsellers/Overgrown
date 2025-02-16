@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 
 export default function WebsiteList() {
-  const [websites, setWebsites] = useState([
-    { title: "Buy groceries for next week", timeLeft: "In progress" },
-    { title: "Renew car insurance", timeLeft: "In progress" },
-    { title: "Sign up for online course", timeLeft: "In progress" },
-  ]);
+  const [websites, setWebsites] = useState([]);
 
   const [newWebsite, setNewWebsite] = useState("");
   const [newTimeLimit, setNewTimeLimit] = useState("");
