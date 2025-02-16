@@ -1,6 +1,29 @@
 # Overgrown
 
-A web extension that grows vines, plants, flowers, etc. across your browser the longer you have specific tabs open. The overgrowth will begin to block elements of the screen and encourage users to step away or be mindful of how long they spend on these tabs.
+Overgrown is a web extension that grows vines, flowers, grass, and other plants across the browser screen. The longer specific tabs are open
+(websites specified by the user - ex. YouTube, Netfix, Spotify, etc.), the more overgrowth will appear across the user's screen, blocking
+out elements of the page, and encouraging the user to step away for a bit or be more productive.
+
+# Installation and Setup
+
+Clone the GitHub repository into your code manager. "git clone <repo URL>"
+<br/>
+Then run the following commands in the terminal:
+<br/>
+
+```
+npm install
+```
+
+and
+
+```
+npm install vite-plugin-static-copy
+```
+
+**To run:**
+Go to chrome extensions, make sure you are in developer mode, then load unpacked on the build folder.
+Once you have it packed the first time, npm run build in terminal and refresh the extension from the chrome extensions page and it should update
 
 # React + Vite
 
