@@ -1,5 +1,8 @@
 let tabsData = {};
 let activeTabId = null;
+let urlList = [ // Store the URL list
+    
+]; 
 
 function sendMessageToTab(tabId, message) {
   console.log(`Sending message to tab ${tabId}:`, message);
@@ -21,10 +24,13 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
       pauseTimer(activeTabId);
     }
 
-    // Start timer for new active tab
+    // Check if the new tab's URL matches any of the tracked URLs
     activeTabId = activeInfo.tabId;
-    console.log(`Starting timer for new active tab ${activeTabId}`);
-    startTimer(activeTabId);
+    chrome.tabs.get(activeTabId, (tab) => {
+      if (tab && tab.url) {
+        checkAndStartTimer(activeTabId, tab.url);
+      }
+    });
   }
 });
 
@@ -32,8 +38,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   console.log(`Tab updated: ${tabId}`, changeInfo, tab);
   if (tabId === activeTabId && changeInfo.status === 'complete') {
-    console.log(`Starting timer for updated tab ${tabId}`);
-    startTimer(tabId);
+    checkAndStartTimer(tabId, tab.url);
   }
 });
 
@@ -48,13 +53,23 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
     // Regain of focus
     chrome.tabs.query({ active: true, windowId }, (tabs) => {
       if (tabs[0] && tabs[0].id === activeTabId) {
-        // Resume timer for the same tab as before
-        console.log(`Resuming timer for refocused window on tab ${activeTabId}`);
-        startTimer(activeTabId);
+        checkAndStartTimer(activeTabId, tabs[0].url);
       }
     });
   }
 });
+
+// Check if URL is in list and start timer if it is
+function checkAndStartTimer(tabId, url) {
+  const site = urlList.find((s) => url.includes(s.url));
+  if (site) {
+    console.log(`Starting timer for tab ${tabId} with URL ${url}`);
+    startTimer(tabId);
+  } else {
+    console.log(`No matching URL found for tab ${tabId} with URL ${url}`);
+    pauseTimer(tabId); // Ensure any previous timer is paused
+  }
+}
 
 // Start timer for a tab
 function startTimer(tabId) {
@@ -94,54 +109,49 @@ function pauseTimer(tabId) {
 // Check if current site is in the website list
 function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
   console.log(`Checking site and updating vegetation for tab ${tabId} with elapsed time ${elapsedTime}`);
-  chrome.storage.sync.get({ sites: [] }, (data) => {
-    const sites = data.sites;
-    chrome.tabs.get(tabId, (tab) => {
-      if (tab && tab.url) {
-        const site = sites.find((s) => tab.url.includes(s.url));
-        if (site) {
-          const totalTime = site.timer * 60;
-          const remainingTime = totalTime - elapsedTime;
-          const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
+  const site = urlList.find((s) => tab.url.includes(s.url));
+  if (site) {
+    const totalTime = site.timer * 60;
+    const remainingTime = totalTime - elapsedTime;
+    const percentage = Math.max(0, (elapsedTime / totalTime) * 100);
 
-          console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
+    console.log(`Site found: ${site.url}, remaining time: ${remainingTime}, percentage: ${percentage}`);
 
-          if (remainingTime <= 0) {
-            console.log(`Time's up for site ${site.url}, locking site.`);
-            sendMessageToTab(tabId, { action: "lockSite" });
-          } else if (remainingTime <= 5 * 60) {
-            sendMessageToTab(tabId, {
-              action: "updateVegetation",
-              percentage,
-            });
-          }
-        }
-      }
-    });
-  });
+    if (remainingTime <= 0) {
+      console.log(`Time's up for site ${site.url}, locking site.`);
+      sendMessageToTab(tabId, { action: "lockSite" });
+    } else if (remainingTime <= 5 * 60) {
+      sendMessageToTab(tabId, {
+        action: "updateVegetation",
+        percentage,
+      });
+    }
+  }
 }
 
 // Listen for start timer message from React component
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('Received message:', message);
-  if (message.action === "START_TIMER") {
+  if (message.action === "UPDATE_URL_LIST") {
+    urlList = message.urls;
+    console.log('URL list updated:', urlList);
+  } else if (message.action === "START_TIMER") {
     const { website, index } = message;
-    chrome.storage.sync.get({ sites: [] }, (data) => {
-      const sites = [...data.sites, website];
-      chrome.storage.sync.set({ sites }, () => {
-        // Set timer data for the website
-        if (!tabsData[activeTabId]) {
-          tabsData[activeTabId] = {
-            startTime: Date.now(),
-            elapsedTime: 0,
-            isTabActive: true,
-            timerInterval: null,
-            totalTime: website.duration * 60
-          };
-        }
-        console.log(`Starting timer for new website ${website.title}`);
-        startTimer(activeTabId);
-      });
+    const sites = [...urlList, website];
+    urlList = sites;
+    chrome.storage.sync.set({ sites }, () => {
+      // Set timer data for the website
+      if (!tabsData[activeTabId]) {
+        tabsData[activeTabId] = {
+          startTime: Date.now(),
+          elapsedTime: 0,
+          isTabActive: true,
+          timerInterval: null,
+          totalTime: website.duration * 60
+        };
+      }
+      console.log(`Starting timer for new website ${website.title}`);
+      startTimer(activeTabId);
     });
   }
 });
