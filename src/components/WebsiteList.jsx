@@ -20,7 +20,11 @@ export default function WebsiteList() {
     setModalOpen(false);
 
     // Send the new website data to background.js
-    chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
+    chrome.runtime.sendMessage({
+      type: "addWebsite",
+      website: newWebsite,
+      timeLeft: newTimeLimit,
+    });
   };
 
   const handleDelete = (index) => {
@@ -28,7 +32,10 @@ export default function WebsiteList() {
     setWebsites(updatedWebsites);
 
     // Send the updated websites data to background.js
-    chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
+    chrome.runtime.sendMessage({
+      type: "updateWebsites",
+      websites: updatedWebsites,
+    });
   };
 
   const handleFinish = (index) => {
@@ -47,9 +54,9 @@ export default function WebsiteList() {
             <div className="card rounded-3">
               <div className="card-body p-4">
                 <h4 className="text-center my-3 pb-3">
-                  Minimize the amount of time you spend on certain sites! Improve your productivity.
+                  Minimize the amount of time you spend on certain sites!
+                  Improve your productivity.
                 </h4>
-
                 {/* Table of Websites */}
                 <table className="table mb-4">
                   <thead>
@@ -72,10 +79,16 @@ export default function WebsiteList() {
                           <td>{website.title}</td>
                           <td>{website.timeLeft}</td>
                           <td>
-                          <button className="btn btn-success" onClick={() => handleFinish(index)}>
+                            <button
+                              className="btn btn-success"
+                              onClick={() => handleFinish(index)}
+                            >
                               Edit
                             </button>
-                            <button className="btn btn-danger" onClick={() => handleDelete(index)}>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDelete(index)}
+                            >
                               Delete
                             </button>
                           </td>
@@ -84,6 +97,19 @@ export default function WebsiteList() {
                     )}
                   </tbody>
                 </table>
+                {/* Button to Add New Website */}
+                {!modalOpen && (
+                  <div className="row d-flex justify-content-center mb-4 pb-2">
+                    <div className="col-auto">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => setModalOpen(true)}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {/* Modal for Adding a New Website */}
                 {modalOpen && (
                   <div className="modal">
@@ -91,40 +117,42 @@ export default function WebsiteList() {
                       <div className="modal-header">
                         <h5 className="modal-title">Add New Website</h5>
                       </div>
-                      <div className="modal-body">
-                        <input
-                          type="text"
-                          placeholder="Enter a website here"
-                          value={newWebsite}
-                          onChange={(e) => setNewWebsite(e.target.value)}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Enter a time limit"
-                          value={newTimeLimit}
-                          onChange={(e) => setNewTimeLimit(e.target.value)}
-                        />
-                      </div>
-                      <div className="modal-footer">
-                        <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
-                          Cancel
-                        </button>
-                        <button className="btn btn-success" onClick={handleAddWebsite}>
-                          Save
-                        </button>
-                      </div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault(); // Prevent page refresh
+                          handleAddWebsite();
+                        }}
+                      >
+                        <div className="modal-body">
+                          <input
+                            type="text"
+                            placeholder="Enter a website here"
+                            value={newWebsite}
+                            onChange={(e) => setNewWebsite(e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Enter a time limit"
+                            value={newTimeLimit}
+                            onChange={(e) => setNewTimeLimit(e.target.value)}
+                          />
+                        </div>
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setModalOpen(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button type="submit" className="btn btn-success">
+                            Save
+                          </button>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 )}
-
-                {/* Button to Add New Website */}
-                <div className="row d-flex justify-content-center mb-4 pb-2">
-                  <div className="col-auto">
-                    <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
-                      Add
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -133,7 +161,6 @@ export default function WebsiteList() {
     </section>
   );
 }
-
 
 /*
 export default function WebsiteList({ websites }) {
