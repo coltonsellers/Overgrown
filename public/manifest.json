@@ -9,10 +9,14 @@
   "background": {
     "service_worker": "background.js"
   },
+  "host_permissions": [
+  "<all_urls>"
+],
   "permissions": [
     "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "scripting"
   ],
   "content_scripts": [
     {

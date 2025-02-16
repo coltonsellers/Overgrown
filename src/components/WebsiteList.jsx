@@ -10,16 +10,31 @@ export default function WebsiteList() {
   const [newWebsite, setNewWebsite] = useState("");
   const [newTimeLimit, setNewTimeLimit] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleAddWebsite = () => {
     if (newWebsite.trim() === "" || newTimeLimit.trim() === "") return;
-    setWebsites([...websites, { title: newWebsite, timeLeft: newTimeLimit }]);
+    if (editIndex !== null) {
+      // Update existing website
+      const updatedWebsites = websites.map((website, index) =>
+        index === editIndex ? { title: newWebsite, timeLeft: newTimeLimit } : website
+      );
+      setWebsites(updatedWebsites);
+
+      // Send the updated websites data to background.js
+      chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
+      setEditIndex(null);
+    } else {
+      // Add new website
+      const newSite = { title: newWebsite, timeLeft: newTimeLimit };
+      setWebsites([...websites, newSite]);
+
+      // Send the new website data to background.js
+      chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
+    }
     setNewWebsite("");
     setNewTimeLimit("");
     setModalOpen(false);
-
-    // Send the new website data to background.js
-    chrome.runtime.sendMessage({ type: "addWebsite", website: newWebsite, timeLeft: newTimeLimit });
   };
 
   const handleDelete = (index) => {
@@ -30,12 +45,11 @@ export default function WebsiteList() {
     chrome.runtime.sendMessage({ type: "updateWebsites", websites: updatedWebsites });
   };
 
-  const handleFinish = (index) => {
-    setWebsites(
-      websites.map((website, i) =>
-        i === index ? { ...website, timeLeft: "Completed" } : website
-      )
-    );
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setNewWebsite(websites[index].title);
+    setNewTimeLimit(websites[index].timeLeft);
+    setModalOpen(true);
   };
 
   return (
@@ -54,8 +68,8 @@ export default function WebsiteList() {
                   <div className="modal">
                     <div className="modal-content">
                       <div className="modal-header">
-                        <h5 className="modal-title">Add New Website</h5>
-                        <button onClick={() => setModalOpen(false)}>&times;</button>
+                        <h5 className="modal-title">{editIndex !== null ? "Edit Website" : "Add New Website"}</h5>
+                        <button onClick={() => { setModalOpen(false); setEditIndex(null); }}>&times;</button>
                       </div>
                       <div className="modal-body">
                         <input
@@ -72,7 +86,7 @@ export default function WebsiteList() {
                         />
                       </div>
                       <div className="modal-footer">
-                        <button className="btn btn-secondary" onClick={() => setModalOpen(false)}>
+                        <button className="btn btn-secondary" onClick={() => { setModalOpen(false); setEditIndex(null); }}>
                           Cancel
                         </button>
                         <button className="btn btn-success" onClick={handleAddWebsite}>
@@ -117,7 +131,7 @@ export default function WebsiteList() {
                             <button className="btn btn-danger" onClick={() => handleDelete(index)}>
                               Delete
                             </button>
-                            <button className="btn btn-success" onClick={() => handleFinish(index)}>
+                            <button className="btn btn-success ms-1" onClick={() => handleEdit(index)}>
                               Edit
                             </button>
                           </td>
@@ -134,22 +148,3 @@ export default function WebsiteList() {
     </section>
   );
 }
-
-
-/*
-export default function WebsiteList({ websites }) {
-    return (
-        <div>
-            {websites.length === 0 ? (
-                <p className="text-gray-500">No websites being tracked.</p>
-            ) : (
-                <ul>
-                    {websites.map((website, index) => (
-                        <WebsiteItem key={index} title={website.title} timeLeft={website.timeLeft} />
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
-};
-*/
