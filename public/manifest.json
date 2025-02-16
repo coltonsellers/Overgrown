@@ -1,21 +1,23 @@
 {
-    "manifest_version": 3,
-    "name": "Overgrown Chrome Extension",
-    "version": "1.0.0",
-    "description": "Overgrowth that blocks out website content the longer you have unwanted tabs open",
-    "action": {
-      "default_popup": "index.html"
-    },
-    "background": {
+  "manifest_version": 3,
+  "name": "Overgrown Chrome Extension",
+  "version": "1.0.0",
+  "description": "Overgrowth that blocks out website content the longer you have unwanted tabs open",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
     "service_worker": "background.js"
-    },
-    "permissions": [
-      "tabs", "background", "storage"
-    ],
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["content.js"]
-        }
-    ]
-  }
+  },
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
