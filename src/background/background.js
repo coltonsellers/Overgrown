@@ -145,7 +145,7 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
           console.log(`Total time is less than 10 minutes for site ${site.url}, starting vegetation update.`);
           const frameIntervalTime = (totalTime * 1000) / 24; // Spread 20 frames evenly across total time
           frameInterval = setInterval(() => {
-            if (currentFrameIndex < 24) {
+            if (currentFrameIndex <= 24) {
               sendMessageToTab(tabId, {
                 action: "updateVegetation",
                 percentage,
@@ -163,7 +163,7 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
       } else if (remainingTime <= 600 && !frameInterval) { // If total time is 10 minutes or more
         console.log(`10 minutes left for site ${site.url}, starting vegetation update.`);
         frameInterval = setInterval(() => {
-          if (currentFrameIndex < 24) {
+          if (currentFrameIndex <= 24) {
             sendMessageToTab(tabId, {
               action: "updateVegetation",
               percentage,
