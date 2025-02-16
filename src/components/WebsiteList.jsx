@@ -114,7 +114,7 @@ export default function WebsiteList() {
                     <thead>
                       <tr>
                         <th className="url-column">Website</th>
-                        <th className="time-column">Time Left</th>
+                        <th className="time-column">Time Limit</th>
                         <th className="action-column">Actions</th>
                       </tr>
                     </thead>
