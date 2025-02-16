@@ -26,6 +26,7 @@ btn :hover
     scrollbar-color: #888 #f0f0f0;
     width: auto;
     max-height: 180px;
+    overflow-x: hidden; 
 }
 .table-header {
     display: inline-block;
@@ -33,7 +34,10 @@ btn :hover
 th.url-column, td.url-column {
     width: 50%; /* More space for URLs */
     min-width: 200px;
+    max-width:200px;
     text-align: left;
+    overflow: hidden; /* Hides overflowing content */
+    text-overflow: ellipsis; /* Shows '...' when content overflows */
   }
 th.time-column {
   width: 20%;
