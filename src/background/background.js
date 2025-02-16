@@ -2,6 +2,12 @@ let tabsData = {};
 let activeTabId = null; 
 let urlList = []; // Store the URL list 
 
+// Array to store the frame paths
+const frames = [];
+for (let i = 1; i <= 20; i++) {
+  frames.push(chrome.runtime.getURL(`assets/frame${i}.svg`));
+}
+
 
 function sendMessageToTab(tabId, message) {
     console.log(`Sending message to tab ${tabId}:`, message);
@@ -134,28 +140,27 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
         clearInterval(frameInterval); // Clear the interval if the time is up
         frameInterval = null;
         currentFrameIndex = 0;
-
-      } else if(totalTime < 600) {
-            if (!frameInterval) {
-                console.log(`Total time is less than 10 minutes for site ${site.url}, starting vegetation update.`);
-                const frameIntervalTime = (totalTime * 1000) / 20; // Spread 20 frames evenly across total time
-                frameInterval = setInterval(() => {
-                  if (currentFrameIndex < 20) {
-                    sendMessageToTab(tabId, {
-                      action: "updateVegetation",
-                      percentage,
-                      frameIndex: currentFrameIndex,
-                    });
-                    currentFrameIndex++;
-                  } else {
-                    clearInterval(frameInterval); // Stop the interval after 20 frames
-                    frameInterval = null;
-                    currentFrameIndex = 0;
-                  }
-                }, frameIntervalTime);
-              }
-              
-      } else if (remainingTime <= 600 && !frameInterval) { // 600 seconds = 10 minutes
+      } else if (totalTime < 600) { // If total time is less than 10 minutes
+        if (!frameInterval) {
+          console.log(`Total time is less than 10 minutes for site ${site.url}, starting vegetation update.`);
+          const frameIntervalTime = (totalTime * 1000) / 20; // Spread 20 frames evenly across total time
+          frameInterval = setInterval(() => {
+            if (currentFrameIndex < 20) {
+              sendMessageToTab(tabId, {
+                action: "updateVegetation",
+                percentage,
+                frameIndex: currentFrameIndex,
+                framePath: frames[currentFrameIndex], // Send the frame path
+              });
+              currentFrameIndex++;
+            } else {
+              clearInterval(frameInterval); // Stop the interval after 20 frames
+              frameInterval = null;
+              currentFrameIndex = 0;
+            }
+          }, frameIntervalTime);
+        }
+      } else if (remainingTime <= 600 && !frameInterval) { // If total time is 10 minutes or more
         console.log(`10 minutes left for site ${site.url}, starting vegetation update.`);
         frameInterval = setInterval(() => {
           if (currentFrameIndex < 20) {
@@ -163,6 +168,7 @@ function checkSiteAndUpdateVegetation(tabId, elapsedTime) {
               action: "updateVegetation",
               percentage,
               frameIndex: currentFrameIndex,
+              framePath: frames[currentFrameIndex], // Send the frame path
             });
             currentFrameIndex++;
           } else {
