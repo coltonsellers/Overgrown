@@ -3,17 +3,26 @@ let activeTabId = null;
 let urlList = []; // Store the URL list 
 
 
-
-// Function to send messages to a specific tab 
-function sendMessageToTab(tabId, message) { 
-  console.log(`Sending message to tab ${tabId}:`, message); 
-  chrome.tabs.query({ active: true, windowId: chrome.windows.WINDOW_ID_CURRENT }, (tabs) => { 
-    const tab = tabs[0]; 
-    if (tab && tab.id === tabId) { 
-      chrome.tabs.sendMessage(tabId, message); 
-    } 
-  }); 
-} 
+function sendMessageToTab(tabId, message) {
+    console.log(`Sending message to tab ${tabId}:`, message);
+  
+    // Inject the content script if it's not already running
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ['content.js']
+    }).then(() => {
+      // Now send the message
+      chrome.tabs.sendMessage(tabId, message, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('Error sending message:', chrome.runtime.lastError);
+        } else {
+          console.log('Response from content script:', response);
+        }
+      });
+    }).catch((error) => {
+      console.error('Failed to inject content script:', error);
+    });
+  }
 
 // Track tab switches 
 chrome.tabs.onActivated.addListener((activeInfo) => { 
