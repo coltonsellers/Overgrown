@@ -47,7 +47,7 @@ export default function WebsiteList() {
   };
 
   return (
-    <section className="vh-100" style={{ backgroundColor: "#eee" }}>
+    <section>
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center">
           <div className="col-lg-9 col-xl-7">
