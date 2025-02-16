@@ -8,12 +8,14 @@ export default function WebsiteList() {
   ]);
 
   const [newWebsite, setNewWebsite] = useState("");
+  const [newTimeLimit, setNewTimeLimit] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleAddWebsite = () => {
-    if (newWebsite.trim() === "") return;
-    setWebsites([...websites, { title: newWebsite, timeLeft: "In progress" }]);
+    if (newWebsite.trim() === "" || newTimeLimit.trim() === "") return;
+    setWebsites([...websites, { title: newWebsite, timeLeft: newTimeLimit }]);
     setNewWebsite("");
+    setNewTimeLimit("");
     setModalOpen(false);
   };
 
@@ -54,6 +56,12 @@ export default function WebsiteList() {
                           placeholder="Enter a website here"
                           value={newWebsite}
                           onChange={(e) => setNewWebsite(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Enter a time limit"
+                          value={newTimeLimit}
+                          onChange={(e) => setNewTimeLimit(e.target.value)}
                         />
                       </div>
                       <div className="modal-footer">
@@ -119,7 +127,6 @@ export default function WebsiteList() {
     </section>
   );
 }
-
 
 /*
 export default function WebsiteList({ websites }) {
