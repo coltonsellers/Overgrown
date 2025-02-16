@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./popupglobal.css";
+import grass from '../assets/grass.svg';
 
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([]);
@@ -125,7 +126,9 @@ export default function WebsiteList() {
                         Add
                       </button>
                     </div>
+                    <img src={grass} alt="logo" className="logo" />
                   </div>
+                  
                 )}
                 {/* Modal for Adding a New Website */}
                 {modalOpen && (
