@@ -143,16 +143,18 @@ export default function WebsiteList() {
                           handleAddWebsite();
                         }}
                       >
-                        <div className="modal-body">
+                        <div className="input-container">
                           <input
+                            className="input-field"
                             type="text"
-                            placeholder="Enter a website here"
+                            placeholder="Enter a website url here"
                             value={newWebsite}
                             onChange={(e) => setNewWebsite(e.target.value)}
                           />
                           <input
-                            type="text"
-                            placeholder="Enter a time limit"
+                            className="input-field"
+                            type="number"
+                            placeholder="Enter a time limit (hours)"
                             value={newTimeLimit}
                             onChange={(e) => setNewTimeLimit(e.target.value)}
                           />
