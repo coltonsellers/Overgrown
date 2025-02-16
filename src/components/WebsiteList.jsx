@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./popupglobal.css";
 import grass from "../assets/grass.svg";
 
+
 export default function WebsiteList() {
   const [websites, setWebsites] = useState([]);
   const [newWebsite, setNewWebsite] = useState("");
@@ -100,6 +101,7 @@ export default function WebsiteList() {
   return (
     <section>
       <div className="container">
+   
         <div className="row d-flex justify-content-center align-items-center">
           <div className="col-lg-9 col-xl-7">
             <div className="card rounded-3">

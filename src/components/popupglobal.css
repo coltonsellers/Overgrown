@@ -11,7 +11,9 @@
     border-color: #663931;
     border-radius: 15px;
 }
- 
+ .container {
+  max-height: 200px;
+ }
 btn :hover
 {
     background-color: #6abe30 !important;
